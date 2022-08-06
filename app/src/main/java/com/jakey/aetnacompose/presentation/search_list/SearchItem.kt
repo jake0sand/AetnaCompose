@@ -20,6 +20,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun SearchItem(
@@ -36,11 +37,17 @@ fun SearchItem(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column() {
-            AsyncImage(
+//            AsyncImage(
+//                contentScale = ContentScale.FillBounds,
+//                model = ImageRequest.Builder(LocalContext.current)
+//                    .data(image)
+//                    .build(),
+//                contentDescription = "Image from search query $query",
+//                modifier = Modifier.fillMaxSize()
+//            )
+            GlideImage(
                 contentScale = ContentScale.Crop,
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(image)
-                    .build(),
+                imageModel = image,
                 contentDescription = "Image from search query $query",
                 modifier = Modifier.fillMaxSize()
             )

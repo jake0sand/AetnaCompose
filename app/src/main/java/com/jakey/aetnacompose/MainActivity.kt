@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        LazyVerticalGrid(cells = GridCells.Fixed(2)) {
+                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                             state.searchResults?.let {
                                 it.forEach { item ->
                                     item {
