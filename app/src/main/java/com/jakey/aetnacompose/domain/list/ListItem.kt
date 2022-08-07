@@ -1,4 +1,4 @@
-package com.jakey.aetnacompose.domain.image
+package com.jakey.aetnacompose.domain.list
 
 data class ListItem(
     val id: Long,

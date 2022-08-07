@@ -1,4 +1,4 @@
-package com.jakey.aetnacompose.presentation.search_list
+package com.jakey.aetnacompose.presentation.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -37,6 +37,7 @@ fun SearchItem(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column() {
+            // Had to switch image loading libraries because coil wasn't loading all images
 //            AsyncImage(
 //                contentScale = ContentScale.FillBounds,
 //                model = ImageRequest.Builder(LocalContext.current)

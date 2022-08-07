@@ -1,7 +1,7 @@
 package com.jakey.aetnacompose.data.repository
 
 import com.jakey.aetnacompose.data.remote.FlickrApi
-import com.jakey.aetnacompose.domain.image.ListItem
+import com.jakey.aetnacompose.domain.list.ListItem
 import com.jakey.aetnacompose.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

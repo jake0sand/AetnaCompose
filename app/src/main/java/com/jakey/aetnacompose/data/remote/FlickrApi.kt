@@ -1,6 +1,6 @@
 package com.jakey.aetnacompose.data.remote
 
-import com.jakey.aetnacompose.data.remote.image_list.ImageListDto
+import com.jakey.aetnacompose.data.remote.responses.ImageListDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

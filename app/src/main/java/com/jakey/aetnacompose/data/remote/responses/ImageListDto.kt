@@ -1,7 +1,5 @@
-package com.jakey.aetnacompose.data.remote.image_list
+package com.jakey.aetnacompose.data.remote.responses
 
-
-import com.squareup.moshi.Json
 
 data class ImageListDto(
     val description: String = "",
