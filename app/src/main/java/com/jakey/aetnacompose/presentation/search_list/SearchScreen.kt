@@ -1,5 +1,7 @@
 package com.jakey.aetnacompose.presentation.search_list
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,10 +42,13 @@ fun SearchScreen(
     val state = viewModel.state
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
-    // we instantiate the saveEmail class
     val dataStore = DataStoreManager(context)
     var queryText by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(viewModel.queryText)
+    }
+
+    LaunchedEffect(true) {
+        viewModel.history = dataStore.readAllValues().toString()
     }
 
     Scaffold(
@@ -60,15 +65,7 @@ fun SearchScreen(
             )
         }
     ) {
-        var history by remember {
-            mutableStateOf(viewModel.history)
-        }
-
-
         Column {
-
-
-
             OutlinedTextField(
                 value = queryText,
                 onValueChange = {
@@ -77,8 +74,6 @@ fun SearchScreen(
                     scope.launch {
                         dataStore.save(queryText, queryText)
                     }
-
-
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,7 +102,10 @@ fun SearchScreen(
             )
 
             Button(
-                onClick = { scope.launch { dataStore.deleteAllKeys() } },
+                onClick = { scope.launch {
+                    dataStore.deleteAllKeys()
+                    viewModel.history = ""
+                } },
                 modifier = Modifier
                     .align(alignment = Alignment.End)
                     .padding(horizontal = 16.dp)
@@ -115,8 +113,6 @@ fun SearchScreen(
                 Text(text = "Delete History")
 
             }
-
-
 
             if (state.isLoading == true) {
                 Loader(
@@ -133,50 +129,78 @@ fun SearchScreen(
                 }
                 LocalSoftwareKeyboardController.current?.hide()
             }
-            LaunchedEffect(true) {
-                history =
-                    dataStore.readAllValues().toString()
-            }
-            if (viewModel.isHistoryVisible) {
-                LazyColumn() {
 
-                    val historyList = history.split(",")
-                    historyList.toMutableStateList()
-                    if (historyList.size > 5) {
-                        val temp = historyList.size - 5
-                        historyList.dropLast(temp)
+            AnimatedVisibility(
+                visible = queryText.isBlank()
+
+            ) {
+                Column() {
+                    var dataStoreIsEmpty = true
+                    LaunchedEffect(true) {
+                        dataStoreIsEmpty = dataStore.readAllValues().isNullOrEmpty()
                     }
-                    items(historyList.size) { index ->
-                        Text(text = historyList[index], modifier = Modifier.clickable {  })
+                    val historyList = viewModel.history
+                        .removeSurrounding("[", "]")
+                        .split(",")
+                        .map(String::trim)
+
+                    Text(
+                        text = if (dataStoreIsEmpty) "No recent searches." else "Recent Searches",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    LazyColumn(Modifier.padding(horizontal = 16.dp)) {
+
+                        historyList.toMutableStateList()
+                        items(historyList.size) { index ->
+                            Text(
+                                text = historyList[index],
+                                modifier = Modifier
+                                    .clickable {
+                                        queryText = historyList[index]
+                                        viewModel.onSearch(historyList[index])
+                                    }
+                                    .background(
+                                        color =
+                                        if (index % 2 == 0) Color.White
+                                        else Color.LightGray
+                                    )
+                                    .fillParentMaxWidth()
+                                    ,
+                                style = MaterialTheme.typography.h6
+                            )
+                        }
                     }
                 }
             }
-            state.searchResults?.let { list ->
 
+            if (state.searchResults != null) {
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2)
-                ) {
-                    items(list.size) { index ->
-                        val item = list[index]
+                state.searchResults.let { list ->
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2)
+                    ) {
+                        items(list.size) { index ->
+                            val item = list[index]
 
-                        SearchItem(
-                            image = item.imageUrl,
-                            title = item.title,
-                            query = queryText,
-                            onClick = {
-                                navigator.navigate(
-                                    DetailScreenDestination(
-                                        imageUrl = item.imageUrl,
-                                        title = item.title,
-                                        author = item.author ?: "Author N/A",
-                                        description = item.description ?: "Description N/A",
-                                        imageWidth = item.imageWidth ?: "-1",
-                                        imageHeight = item.imageHeight ?: "-1"
+                            SearchItem(
+                                image = item.imageUrl,
+                                title = item.title,
+                                query = queryText,
+                                onClick = {
+                                    navigator.navigate(
+                                        DetailScreenDestination(
+                                            imageUrl = item.imageUrl,
+                                            title = item.title,
+                                            author = item.author ?: "Author N/A",
+                                            description = item.description ?: "Description N/A",
+                                            imageWidth = item.imageWidth ?: "-1",
+                                            imageHeight = item.imageHeight ?: "-1"
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
                 }
             }

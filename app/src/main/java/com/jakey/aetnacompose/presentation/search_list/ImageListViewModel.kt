@@ -19,19 +19,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ImageListViewModel @Inject constructor(
     private val repository: ImageListRepository,
-    val dataStore: DataStoreManager
+    private val dataStore: DataStoreManager
 ) : ViewModel() {
 
-
-    var history: String = ""
+    var history by mutableStateOf("")
     var state by mutableStateOf(SearchState())
     private var searchJob: Job? = null
-
-    var isHistoryVisible = true
-
-    var query: String = ""
-
-    var dataStoreList = mutableListOf<String>("")
 
     init {
         viewModelScope.launch {
@@ -39,13 +32,19 @@ class ImageListViewModel @Inject constructor(
         }
     }
 
+    var queryText by mutableStateOf("")
     fun onSearch(query: String) {
-
+        queryText = query
         searchJob?.cancel()
 
-        // Talking point, misread instructions and search ahead instead of button click search.
-        if (query.isNotBlank()) {
-            searchJob = repository.getImages(query).onEach() { result ->
+        // misread instructions and did search ahead instead of search on button click.
+        // took way longer, but learned a ton along the way. WORTH IT.
+
+        // Biggest problem was I wasn't able to figure out how to not save every character to
+        // Data Store.. I'm sure it's something obvious, I just could not reach the solution.
+        if (queryText.isNotBlank()) {
+
+            searchJob = repository.getImages(queryText).onEach() { result ->
                 state = state.copy(error = null)
                 // delay here to allow user a bit of time to type a query before searching
                 delay(500L)
@@ -57,7 +56,6 @@ class ImageListViewModel @Inject constructor(
                             searchResults = result.data,
                             isLoading = false
                         )
-                        history = query
                     }
                     is Resource.Error -> {
                         state = state.copy(
@@ -67,6 +65,7 @@ class ImageListViewModel @Inject constructor(
                     }
                     is Resource.Loading -> {}
                 }
+                history = dataStore.readAllValues().toString()
 
             }.launchIn(viewModelScope)
         }
