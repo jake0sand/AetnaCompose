@@ -1,8 +1,8 @@
 package com.jakey.aetnacompose.data.remote.responses
 
 
-import com.jakey.aetnacompose.data.domain.detail.DetailItem
-import com.jakey.aetnacompose.domain.list.ListItem
+
+import com.jakey.aetnacompose.domain.list.DetailItem
 import com.squareup.moshi.Json
 
 data class Item(
@@ -18,26 +18,17 @@ data class Item(
     val tags: String = "",
     val title: String = ""
 ) {
-    fun toListImage(): ListItem {
-        return ListItem(
-            id = link.dropLast(1).split('/').last().toLong(),
-            title = title,
-            imageUrl = media.m
-        )
-    }
-
-    fun toDetailItem(): DetailItem {
-        val stringBeforeWidth = "width=\\\""
-        val stringAfterWidth = "\\\" "
-        val stringBeforeHeight = "height=\\\""
-        val stringAfterHeight = "\\\" "
+    fun toListImage(): DetailItem {
         return DetailItem(
-            image = media.m,
             title = title,
-            description = description,
-            imageWidth = description.substringAfter(stringAfterWidth).substringBefore(stringAfterWidth).toInt(),
-            imageHeight = description.substringAfter(stringBeforeHeight).substringBefore(stringAfterHeight).toInt(),
-            author = author
+            imageUrl = media.m,
+            author = author.substringAfter("(\"").substringBefore("\")"),
+            imageHeight = description.substringAfter("height=\"").substringBefore("\""),
+            imageWidth = description.substringAfter("width=\"").substringBefore("\""),
+            /* I thought about parsing the last sentence that seemed like it was supposed to be the
+             description, but a lot of pictures didn't have a final sentence and I didn't want
+             blank descriptions */
+            description = description
         )
     }
 }

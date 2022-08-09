@@ -4,6 +4,18 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
+    id 'com.google.devtools.ksp' version '1.6.10-1.0.2'
+}
+
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
 }
 
 android {
@@ -69,9 +81,16 @@ dependencies {
     implementation "com.google.accompanist:accompanist-flowlayout:0.17.0"
     implementation "androidx.activity:activity-compose:1.6.0-alpha01"
 
+    // Data Store
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
     // Coil
     implementation "io.coil-kt:coil-compose:2.1.0"
     implementation "com.github.skydoves:landscapist-glide:1.6.0"
+
+    // Compose destinations (nav)
+    implementation 'io.github.raamcosta.compose-destinations:core:1.5.15-beta'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:1.5.15-beta'
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"

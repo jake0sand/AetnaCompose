@@ -1,7 +1,7 @@
 package com.jakey.aetnacompose.data.repository
 
 import com.jakey.aetnacompose.data.remote.FlickrApi
-import com.jakey.aetnacompose.domain.list.ListItem
+import com.jakey.aetnacompose.domain.list.DetailItem
 import com.jakey.aetnacompose.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,7 +13,7 @@ class ImageListRepository @Inject constructor(
     private val api: FlickrApi
 ) {
 
-     fun getImages(query: String): Flow<Resource<List<ListItem>>> = flow {
+     fun getImages(query: String): Flow<Resource<List<DetailItem>>> = flow {
         try {
             emit(Resource.Loading())
             val result = api.getImages(query).items
@@ -26,7 +26,7 @@ class ImageListRepository @Inject constructor(
         } catch (e: HttpException) {
             e.printStackTrace()
             emit(Resource.Error(
-                message = e.message ?: "Error fetching data"
+                message = e.code().toString()
             ))
         }
     }
