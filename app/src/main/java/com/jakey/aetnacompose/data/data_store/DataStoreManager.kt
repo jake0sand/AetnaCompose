@@ -25,7 +25,13 @@ class DataStoreManager @Inject constructor(
     suspend fun save(key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { history ->
-            history[dataStoreKey] = value
+            if (history.asMap().keys.size == 5) {
+                history.remove(history.asMap().keys.last())
+                history[dataStoreKey] = value
+            } else {
+                history[dataStoreKey] = value
+            }
+
         }
     }
 
@@ -33,6 +39,12 @@ class DataStoreManager @Inject constructor(
     suspend fun deleteAllKeys() {
         context.dataStore.edit {
             it.clear()
+        }
+    }
+
+    suspend fun deleteLastKey() {
+        context.dataStore.edit {
+            it.remove(it.asMap().keys.last())
         }
     }
 

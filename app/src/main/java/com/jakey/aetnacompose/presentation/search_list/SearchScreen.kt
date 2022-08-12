@@ -28,6 +28,7 @@ import com.jakey.aetnacompose.presentation.composables.SearchItem
 import com.jakey.aetnacompose.presentation.destinations.DetailScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -43,13 +44,6 @@ fun SearchScreen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val dataStore = DataStoreManager(context)
-    var queryText by rememberSaveable {
-        mutableStateOf(viewModel.queryText)
-    }
-
-    LaunchedEffect(true) {
-        viewModel.history = dataStore.readAllValues().toString()
-    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -67,13 +61,10 @@ fun SearchScreen(
     ) {
         Column {
             OutlinedTextField(
-                value = queryText,
+                value = viewModel.queryText,
                 onValueChange = {
-                    queryText = it
-                    viewModel.onSearch(queryText)
-                    scope.launch {
-                        dataStore.save(queryText, queryText)
-                    }
+                    viewModel.queryText = it
+                    viewModel.onSearch(viewModel.queryText)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -87,7 +78,7 @@ fun SearchScreen(
                 trailingIcon = {
 
                     IconButton(onClick = {
-                        queryText = ""
+                        viewModel.queryText = ""
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -131,11 +122,11 @@ fun SearchScreen(
             }
 
             AnimatedVisibility(
-                visible = queryText.isBlank()
+                visible = viewModel.queryText.isBlank()
 
             ) {
                 Column() {
-                    var dataStoreIsEmpty = true
+                    var dataStoreIsEmpty by rememberSaveable { mutableStateOf(true) }
                     LaunchedEffect(true) {
                         dataStoreIsEmpty = dataStore.readAllValues().isNullOrEmpty()
                     }
@@ -150,14 +141,15 @@ fun SearchScreen(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     LazyColumn(Modifier.padding(horizontal = 16.dp)) {
-
+                        scope.launch{ dataStore.readAllValues().toString() }
                         historyList.toMutableStateList()
                         items(historyList.size) { index ->
+
                             Text(
                                 text = historyList[index],
                                 modifier = Modifier
                                     .clickable {
-                                        queryText = historyList[index]
+                                        viewModel.queryText = historyList[index]
                                         viewModel.onSearch(historyList[index])
                                     }
                                     .background(
@@ -170,6 +162,7 @@ fun SearchScreen(
                                 style = MaterialTheme.typography.h6
                             )
                         }
+
                     }
                 }
             }
@@ -186,7 +179,7 @@ fun SearchScreen(
                             SearchItem(
                                 image = item.imageUrl,
                                 title = item.title,
-                                query = queryText,
+                                query = viewModel.queryText,
                                 onClick = {
                                     navigator.navigate(
                                         DetailScreenDestination(
