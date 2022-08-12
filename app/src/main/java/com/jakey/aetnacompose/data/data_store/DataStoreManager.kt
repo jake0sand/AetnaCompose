@@ -26,12 +26,12 @@ class DataStoreManager @Inject constructor(
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { history ->
             if (history.asMap().keys.size == 5) {
-                history.remove(history.asMap().keys.last())
                 history[dataStoreKey] = value
+                history.remove(history.asMap().keys.last())
+
             } else {
                 history[dataStoreKey] = value
             }
-
         }
     }
 

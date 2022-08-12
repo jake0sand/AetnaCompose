@@ -22,7 +22,7 @@ class ImageListViewModel @Inject constructor(
     private val dataStore: DataStoreManager
 ) : ViewModel() {
 
-    var history by mutableStateOf("")
+
     var state by mutableStateOf(SearchState())
     private var searchJob: Job? = null
 
@@ -33,6 +33,7 @@ class ImageListViewModel @Inject constructor(
     }
 
     var queryText by mutableStateOf("")
+    var history by mutableStateOf(queryText)
     fun onSearch(query: String) {
         queryText = query
         searchJob?.cancel()
@@ -56,8 +57,7 @@ class ImageListViewModel @Inject constructor(
                             searchResults = result.data,
                             isLoading = false
                         )
-                        delay(500)
-                        dataStore.save(query, query)
+                        dataStore.save(queryText, queryText)
                     }
                     is Resource.Error -> {
                         state = state.copy(
@@ -71,7 +71,6 @@ class ImageListViewModel @Inject constructor(
             }.launchIn(viewModelScope)
 
         }
-
     }
 
 }
