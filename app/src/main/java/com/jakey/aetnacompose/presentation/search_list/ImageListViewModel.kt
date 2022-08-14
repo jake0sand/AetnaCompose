@@ -45,31 +45,31 @@ class ImageListViewModel @Inject constructor(
         // Data Store.. I'm sure it's something obvious, I just could not reach the solution.
         if (query.isNotBlank()) {
 
-            searchJob = repository.getImages(query).onEach() { result ->
-                state = state.copy(error = null)
-                // delay here to allow user a bit of time to type a query before searching
-                delay(500L)
+            searchJob = repository.getImages(query).onEach { result ->
+                viewModelScope.launch{
+                    state = state.copy(error = null)
+                    // delay here to allow user a bit of time to type a query before searching
+                    delay(500L)
 
-                state = state.copy(isLoading = true)
-                when (result) {
-                    is Resource.Success -> {
-                        state = state.copy(
-                            searchResults = result.data,
-                            isLoading = false
-                        )
-                        dataStore.save(queryText, queryText)
+                    state = state.copy(isLoading = true)
+                    when (result) {
+                        is Resource.Success -> {
+                            state = state.copy(
+                                searchResults = result.data,
+                                isLoading = false
+                            )
+                            dataStore.save(queryText, queryText)
+                        }
+                        is Resource.Error -> {
+                            state = state.copy(
+                                error = result.message,
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Loading -> {}
                     }
-                    is Resource.Error -> {
-                        state = state.copy(
-                            error = result.message,
-                            isLoading = false
-                        )
-                    }
-                    is Resource.Loading -> {}
                 }
-
             }.launchIn(viewModelScope)
-
         }
     }
 

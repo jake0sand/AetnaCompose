@@ -16,7 +16,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jakey.aetnacompose.data.data_store.DataStoreManager
-import com.jakey.aetnacompose.presentation.composables.Loader
+import com.jakey.aetnacompose.presentation.search_list.composables.HistoryLazyColumn
+import com.jakey.aetnacompose.presentation.search_list.composables.Loader
+import com.jakey.aetnacompose.presentation.search_list.composables.OutlinedSearchField
+import com.jakey.aetnacompose.presentation.search_list.composables.SearchLazyColumn
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope

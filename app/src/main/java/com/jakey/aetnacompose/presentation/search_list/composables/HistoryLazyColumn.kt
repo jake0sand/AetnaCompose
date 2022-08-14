@@ -1,4 +1,4 @@
-package com.jakey.aetnacompose.presentation.search_list
+package com.jakey.aetnacompose.presentation.search_list.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jakey.aetnacompose.data.data_store.DataStoreManager
+import com.jakey.aetnacompose.presentation.search_list.ImageListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

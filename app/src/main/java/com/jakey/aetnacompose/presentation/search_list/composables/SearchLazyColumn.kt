@@ -1,10 +1,11 @@
-package com.jakey.aetnacompose.presentation.search_list
+package com.jakey.aetnacompose.presentation.search_list.composables
 
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import com.jakey.aetnacompose.presentation.composables.SearchItem
 import com.jakey.aetnacompose.presentation.destinations.DetailScreenDestination
+import com.jakey.aetnacompose.presentation.search_list.ImageListViewModel
+import com.jakey.aetnacompose.presentation.search_list.SearchState
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable

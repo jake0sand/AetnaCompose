@@ -1,6 +1,7 @@
-package com.jakey.aetnacompose.presentation.composables
+package com.jakey.aetnacompose.presentation.search_list.composables
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

@@ -14,20 +14,26 @@ class ImageListRepository @Inject constructor(
 ) {
 
      fun getImages(query: String): Flow<Resource<List<DetailItem>>> = flow {
-        try {
-            emit(Resource.Loading())
-            val result = api.getImages(query).items
-            emit(Resource.Success(data = result.map { it.toListImage() }))
-        } catch (e: IOException) {
-            e.printStackTrace()
-            emit(Resource.Error(
-                message = e.message ?: "Check internet connection"
-            ))
-        } catch (e: HttpException) {
-            e.printStackTrace()
-            emit(Resource.Error(
-                message = e.code().toString()
-            ))
+        if (query.isNotBlank()) {
+            try {
+                emit(Resource.Loading())
+                val result = api.getImages(query).items
+                emit(Resource.Success(data = result.map { it.toListImage() }))
+            } catch (e: IOException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = e.message ?: "Check internet connection"
+                    )
+                )
+            } catch (e: HttpException) {
+                e.printStackTrace()
+                emit(
+                    Resource.Error(
+                        message = e.code().toString()
+                    )
+                )
+            }
         }
     }
 
