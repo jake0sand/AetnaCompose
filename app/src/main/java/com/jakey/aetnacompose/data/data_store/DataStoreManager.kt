@@ -25,9 +25,9 @@ class DataStoreManager @Inject constructor(
     suspend fun save(key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { history ->
-            if (history.asMap().keys.size == 5) {
-                history[dataStoreKey] = value
-                history.remove(history.asMap().keys.last())
+            history[dataStoreKey] = value
+            if (history.asMap().keys.size == 6) {
+                history.remove(history.asMap().keys.first())
 
             } else {
                 history[dataStoreKey] = value

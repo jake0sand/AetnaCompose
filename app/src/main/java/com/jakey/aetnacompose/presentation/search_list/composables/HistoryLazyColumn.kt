@@ -9,55 +9,50 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jakey.aetnacompose.data.data_store.DataStoreManager
 import com.jakey.aetnacompose.presentation.search_list.ImageListViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ColumnScope.HistoryLazyColumn(
     viewModel: ImageListViewModel,
     dataStore: DataStoreManager,
+    isHistoryEmpty: Boolean,
     scope: CoroutineScope
 ) {
+
     AnimatedVisibility(
         visible = viewModel.queryText.isBlank()
 
     ) {
         Column() {
-            var dataStoreIsEmpty by rememberSaveable { mutableStateOf(true) }
-            LaunchedEffect(true) {
-                dataStoreIsEmpty = dataStore.readAllValues().isNullOrEmpty()
-            }
-
-
-
             Text(
-                text = if (dataStoreIsEmpty) "No recent searches." else "Recent Searches",
+                text = if (!isHistoryEmpty) {
+                    "Recent Searches"
+                } else {
+                    "No recent searches."
+                },
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             LazyColumn(Modifier.padding(horizontal = 16.dp)) {
-                scope.launch { dataStore.readAllValues().toString() }
 
-                val historyList = viewModel.history
-                .removeSurrounding("[", "]")
-                .split(",")
-                .map(String::trim).reversed()
-                historyList.toMutableStateList()
-                items(historyList.size) { index ->
+                val history = viewModel.history
+                    .removeSurrounding("[", "]")
+                    .split(",")
+                    .map(String::trim).reversed()
+                items(history.size) { index ->
 
                     Text(
-                        text = historyList[index],
+                        text = history[index],
                         modifier = Modifier
                             .clickable {
-                                viewModel.queryText = historyList[index]
-                                viewModel.onSearch(historyList[index])
+                                viewModel.queryText = history[index]
+                                viewModel.onSearch(history[index])
                             }
                             .background(
                                 color =
@@ -73,3 +68,4 @@ fun ColumnScope.HistoryLazyColumn(
         }
     }
 }
+

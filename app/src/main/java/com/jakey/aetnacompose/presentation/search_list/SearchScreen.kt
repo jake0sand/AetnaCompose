@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @Destination(start = true)
 @Composable
 fun SearchScreen(
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val scope = rememberCoroutineScope()
     val viewModel: ImageListViewModel = hiltViewModel()
@@ -38,6 +38,7 @@ fun SearchScreen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val dataStore = DataStoreManager(context)
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -73,18 +74,27 @@ fun SearchScreen(
                 )
             }
 
-            DeleteButton(
-                scope = scope,
-                dataStore = dataStore,
-                viewModel = viewModel,
-                modifier = Modifier.Companion
+            Button(
+                onClick = {
+                    scope.launch {
+                        dataStore.deleteAllKeys()
+                        viewModel.history = ""
+                        viewModel.dataStoreIsEmpty = true
+                    }
+                },
+                modifier = Modifier
                     .align(alignment = Alignment.End)
                     .padding(horizontal = 16.dp)
-            )
+            ) {
+                Text(text = "Delete History")
+            }
+
+
 
             HistoryLazyColumn(
                 viewModel = viewModel,
                 dataStore = dataStore,
+                isHistoryEmpty = viewModel.dataStoreIsEmpty,
                 scope = scope
             )
 
@@ -98,7 +108,6 @@ fun SearchScreen(
 }
 
 
-
 @Composable
 private fun DeleteButton(
     scope: CoroutineScope,
@@ -106,17 +115,6 @@ private fun DeleteButton(
     viewModel: ImageListViewModel,
     modifier: Modifier = Modifier
 ) {
-    Button(
-        onClick = {
-            scope.launch {
-                dataStore.deleteAllKeys()
-                viewModel.history = ""
-            }
-        },
-        modifier = modifier
-    ) {
-        Text(text = "Delete History")
 
-    }
 }
 

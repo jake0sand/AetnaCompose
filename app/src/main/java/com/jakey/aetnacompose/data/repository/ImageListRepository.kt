@@ -1,5 +1,6 @@
 package com.jakey.aetnacompose.data.repository
 
+import com.jakey.aetnacompose.data.data_store.DataStoreManager
 import com.jakey.aetnacompose.data.remote.FlickrApi
 import com.jakey.aetnacompose.domain.list.DetailItem
 import com.jakey.aetnacompose.util.Resource
@@ -10,15 +11,17 @@ import java.io.IOException
 import javax.inject.Inject
 
 class ImageListRepository @Inject constructor(
-    private val api: FlickrApi
+    private val api: FlickrApi,
+    private val dataStore: DataStoreManager
 ) {
 
-     fun getImages(query: String): Flow<Resource<List<DetailItem>>> = flow {
+     suspend fun getImages(query: String): Flow<Resource<List<DetailItem>>> = flow {
         if (query.isNotBlank()) {
             try {
                 emit(Resource.Loading())
                 val result = api.getImages(query).items
                 emit(Resource.Success(data = result.map { it.toListImage() }))
+
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(
