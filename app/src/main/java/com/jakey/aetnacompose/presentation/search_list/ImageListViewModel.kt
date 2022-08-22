@@ -22,22 +22,28 @@ class ImageListViewModel @Inject constructor(
     private val dataStore: DataStoreManager
 ) : ViewModel() {
 
-
-    var history by mutableStateOf("")
+    /**
+     * I've returned the history as a list instead of returning a string then converting to a list.
+     * I was doing an extra completely unnecessary step before, and also it did not work right when a
+     * comma-separated query was entered as it would .split(",") making each word (in the c-separated query)
+     * save as a separate entry in the history.
+     */
+    var history by mutableStateOf(listOf(""))
     var dataStoreIsEmpty by mutableStateOf(false)
     var state by mutableStateOf(SearchState())
     private var searchJob: Job? = null
 
     init {
         viewModelScope.launch {
-            history = dataStore.readAllValues().toString()
+            // I can non-null assert here (I think), because Data Store requires a default value.
+            history = dataStore.readAllValues()?.map { it.toString() }!!
             getHistory()
         }
     }
 
     var queryText by mutableStateOf("")
 
-    fun getHistory() {
+    private fun getHistory() {
         viewModelScope.launch{
             dataStoreIsEmpty = dataStore.readAllValues()?.isEmpty() == true
         }
@@ -52,15 +58,14 @@ class ImageListViewModel @Inject constructor(
 
         // Biggest problem was I wasn't able to figure out how to not save every character to
         // Data Store.. I'm sure it's something obvious, I just could not reach the solution.
-        if (query.isNotBlank()) {
 
+        if (queryText.isNotBlank()) {
             searchJob = viewModelScope.launch {
+                // delay here to allow user a bit of time to type a query before searching
                 delay(1000L)
                 repository.getImages(query).onEach { result ->
 
                     state = state.copy(error = null)
-                    // delay here to allow user a bit of time to type a query before searching
-
 
                     state = state.copy(isLoading = true)
                     when (result) {
@@ -71,7 +76,7 @@ class ImageListViewModel @Inject constructor(
                                 isLoading = false
                             )
                             dataStore.save(queryText, queryText)
-                            history = dataStore.readAllValues().toString()
+                            history = dataStore.readAllValues()?.map { it.toString() }!!
                             dataStoreIsEmpty = false
                         }
                         is Resource.Error -> {

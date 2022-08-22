@@ -1,6 +1,6 @@
 package com.jakey.aetnacompose.presentation.search_list
 
-import com.jakey.aetnacompose.domain.list.DetailItem
+import com.jakey.aetnacompose.domain.detail_item.DetailItem
 
 data class SearchState(
     val searchResults: List<DetailItem>? = null,

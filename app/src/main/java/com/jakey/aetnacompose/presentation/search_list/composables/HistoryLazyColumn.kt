@@ -13,23 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.jakey.aetnacompose.data.data_store.DataStoreManager
 import com.jakey.aetnacompose.presentation.search_list.ImageListViewModel
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ColumnScope.HistoryLazyColumn(
     viewModel: ImageListViewModel,
-    dataStore: DataStoreManager,
     isHistoryEmpty: Boolean,
-    scope: CoroutineScope
 ) {
 
     AnimatedVisibility(
         visible = viewModel.queryText.isBlank()
 
     ) {
-        Column() {
+        Column {
             Text(
                 text = if (!isHistoryEmpty) {
                     "Recent Searches"
@@ -41,10 +37,8 @@ fun ColumnScope.HistoryLazyColumn(
             )
             LazyColumn(Modifier.padding(horizontal = 16.dp)) {
 
-                val history = viewModel.history
-                    .removeSurrounding("[", "]")
-                    .split(",")
-                    .map(String::trim).reversed()
+                val history = viewModel.history.reversed()
+
                 items(history.size) { index ->
 
                     Text(

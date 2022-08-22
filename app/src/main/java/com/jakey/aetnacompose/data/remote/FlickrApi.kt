@@ -4,6 +4,10 @@ import com.jakey.aetnacompose.data.remote.responses.ImageListDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/**
+ * This is my interface for declaring URL queries to the network using Retrofit. Companion object
+ * is the base URL that any api request from this API should use.
+ */
 interface FlickrApi {
 
     @GET("services/feeds/photos_public.gne?format=json&nojsoncallback=1")

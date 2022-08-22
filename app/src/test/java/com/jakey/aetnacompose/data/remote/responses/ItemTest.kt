@@ -1,6 +1,6 @@
 package com.jakey.aetnacompose.data.remote.responses
 
-import com.jakey.aetnacompose.domain.list.DetailItem
+import com.jakey.aetnacompose.domain.detail_item.DetailItem
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Test

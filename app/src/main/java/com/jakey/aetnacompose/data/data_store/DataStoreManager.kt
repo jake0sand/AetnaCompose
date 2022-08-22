@@ -13,25 +13,30 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * This is many preferences manager. This is where all the data persistence happens and where
+ * I declare how data is stored and retrieved. "Data Store" is always ran from suspend function.
+ */
+
 @Singleton
 class DataStoreManager @Inject constructor(
     @ApplicationContext val context: Context
 ) {
 
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("history")
+        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("")
     }
 
     suspend fun save(key: String, value: String) {
         val dataStoreKey = stringPreferencesKey(key)
         context.dataStore.edit { history ->
             history[dataStoreKey] = value
-            if (history.asMap().keys.size == 6) {
+            while (history.asMap().keys.size >= 6) {
                 history.remove(history.asMap().keys.first())
 
-            } else {
-                history[dataStoreKey] = value
             }
+            history[dataStoreKey] = value
+
         }
     }
 

@@ -2,7 +2,7 @@ package com.jakey.aetnacompose.data.remote.responses
 
 
 
-import com.jakey.aetnacompose.domain.list.DetailItem
+import com.jakey.aetnacompose.domain.detail_item.DetailItem
 import com.squareup.moshi.Json
 
 data class Item(

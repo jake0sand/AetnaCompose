@@ -30,15 +30,6 @@ fun SearchItem(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column() {
-            // Had to switch image loading libraries because coil wasn't loading all images
-//            AsyncImage(
-//                contentScale = ContentScale.FillBounds,
-//                model = ImageRequest.Builder(LocalContext.current)
-//                    .data(image)
-//                    .build(),
-//                contentDescription = "Image from search query $query",
-//                modifier = Modifier.fillMaxSize()
-//            )
             GlideImage(
                 contentScale = ContentScale.Crop,
                 imageModel = image,

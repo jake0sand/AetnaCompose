@@ -22,7 +22,6 @@ import com.jakey.aetnacompose.presentation.search_list.composables.OutlinedSearc
 import com.jakey.aetnacompose.presentation.search_list.composables.SearchLazyColumn
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -38,7 +37,6 @@ fun SearchScreen(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val dataStore = DataStoreManager(context)
-
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -56,6 +54,8 @@ fun SearchScreen(
     ) {
         Column {
 
+            // If an error occurs on search, show Snackbar with an error code or message.
+            // Also hide keyboard so user can see Snackbar before it disappears.
             if (state.error != null) {
                 LaunchedEffect(scaffoldState.snackbarHostState) {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -67,6 +67,7 @@ fun SearchScreen(
 
             OutlinedSearchField(viewModel = viewModel)
 
+            // Progress bar if search results are currently loading
             if (state.isLoading == true) {
                 Loader(
                     state = state,
@@ -74,11 +75,12 @@ fun SearchScreen(
                 )
             }
 
+            // Delete history button
             Button(
                 onClick = {
                     scope.launch {
                         dataStore.deleteAllKeys()
-                        viewModel.history = ""
+                        viewModel.history = listOf("")
                         viewModel.dataStoreIsEmpty = true
                     }
                 },
@@ -89,13 +91,9 @@ fun SearchScreen(
                 Text(text = "Delete History")
             }
 
-
-
             HistoryLazyColumn(
                 viewModel = viewModel,
-                dataStore = dataStore,
                 isHistoryEmpty = viewModel.dataStoreIsEmpty,
-                scope = scope
             )
 
             SearchLazyColumn(
@@ -106,15 +104,3 @@ fun SearchScreen(
         }
     }
 }
-
-
-@Composable
-private fun DeleteButton(
-    scope: CoroutineScope,
-    dataStore: DataStoreManager,
-    viewModel: ImageListViewModel,
-    modifier: Modifier = Modifier
-) {
-
-}
-
